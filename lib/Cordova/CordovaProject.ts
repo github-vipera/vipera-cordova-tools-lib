@@ -247,7 +247,7 @@ export class CordovaProject {
         this._packageJson = this.loadPackageJSON(this._projectPath);
     }
 
-    public async addPluginWithId(pluginId:string){
+    public async addPluginById(pluginId:string){
         var projectInfo = await this.getProjectInfo(false);
         var cdvExecutor = new CordovaExecutor(this._projectPath);
         await cdvExecutor.addPlugin(projectInfo, pluginId, {});
@@ -266,8 +266,11 @@ export class CordovaProject {
         this._packageJson = this.loadPackageJSON(this._projectPath);
     }
 
-    public async removePlugin(pluginInfo:CordovaPlugin){
-        //TODO!!
+    public async removePlugin(pluginId:string){
+        var projectInfo = await this.getProjectInfo(false);
+        var cdvExecutor = new CordovaExecutor(this._projectPath);
+        await cdvExecutor.removePlugin(projectInfo, pluginId);
+        this._packageJson = this.loadPackageJSON(this._projectPath);
     }
 
     public setName(name:string, save?:boolean):void {

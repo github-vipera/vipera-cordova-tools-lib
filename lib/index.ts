@@ -1,4 +1,4 @@
 
 
 /** Exports */
-export { CordovaProject } from './Cordova/CordovaProject'
+export { CordovaPlatform, CordovaPlugin, CordovaPluginsFinder, CordovaProject, CordovaProjectInfo } from './Cordova/Cordova'

@@ -1,0 +1,29 @@
+{
+  "name": "vipera-cordova-tools-lib",
+  "version": "0.0.1",
+  "description": "Cordova Tools Library Utility",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "Apache 2.0",
+  "devDependencies": {
+    "@types/lodash": "^4.14.92",
+    "@types/node": "^9.3.0",
+    "typescript": "^2.6.2"
+  },
+  "dependencies": {
+    "fs-extra": "^5.0.0",
+    "jsonfile": "^4.0.0",
+    "lodash": "^4.17.4",
+    "path": "^0.12.7",
+    "require-text": "0.0.1",
+    "tree-kill": "^1.2.0",
+    "winston": "^2.4.0",
+    "xml2js": "^0.4.19"
+  }
+}

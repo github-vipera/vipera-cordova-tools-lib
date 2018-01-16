@@ -64,6 +64,16 @@ export interface CordovaProjectInfo {
     npmScripts?:Array<string>;
   }
   
+  export interface NewProjectInfo {
+    name:string;
+    packageId:string;
+    basePath:string;
+    path:string;
+    platforms:Array<string>,
+    type:string;
+    template:string;
+  }
+  
   
   
 
@@ -232,14 +242,28 @@ export class CordovaProject {
     }
 
     public async removePlatform(platformName:string) {
-        var prjInfo = await this.getProjectInfo(false);
         var cdvExecutor = new CordovaExecutor(this._projectPath);
         cdvExecutor.removePlatforms([platformName], this._projectPath);
         this._packageJson = this.loadPackageJSON(this._projectPath);
     }
 
+    public async addPluginWithId(pluginId:string){
+        var projectInfo = await this.getProjectInfo(false);
+        var cdvExecutor = new CordovaExecutor(this._projectPath);
+        await cdvExecutor.addPlugin(projectInfo, pluginId, {});
+        this._packageJson = this.loadPackageJSON(this._projectPath);
+    }
+
     public async addPlugin(pluginInfo:CordovaPlugin){
-        //TODO!!
+        var projectInfo = await this.getProjectInfo(false);
+        let installOpt:any = undefined;
+        if (pluginInfo.repository==='local'){
+          installOpt = {};
+          installOpt.searchPath = pluginInfo.localPath;
+        }
+        var cdvExecutor = new CordovaExecutor(this._projectPath);
+        await cdvExecutor.addPlugin(projectInfo, pluginInfo.id, installOpt);
+        this._packageJson = this.loadPackageJSON(this._projectPath);
     }
 
     public async removePlugin(pluginInfo:CordovaPlugin){
@@ -355,4 +379,9 @@ export class CordovaProject {
         fs.writeFileSync(jsonPath, JSON.stringify(packageJson, null, "\t"), 'utf8')
     }
     
+    public static createNewProject(projectInfo: NewProjectInfo): Promise<any> {
+        var cdvExecutor = new CordovaExecutor('.');
+        return cdvExecutor.createNewProject(projectInfo);
+    }
+
 }

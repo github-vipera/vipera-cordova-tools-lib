@@ -168,7 +168,7 @@ export class CordovaExecutor extends CommandExecutor {
     });
   }
 
-  public execNpmInstall(projectRoot:string){
+  private execNpmInstall(projectRoot:string){
     Logger.getInstance().info("execNpmInstall for: ", projectRoot)
     var cmd="npm"
     var args = ["install"];

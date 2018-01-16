@@ -17,6 +17,7 @@ const winston = require('winston');
 import { CordovaPluginScanner } from './CordovaPluginScanner'
 import { ResourceManager } from '../Utils/ResourceManager'
 import { CordovaExecutor } from './CordovaExecutor'
+import { Logger } from '../Utils/Logger'
 
 
 export class CordovaPlatform {
@@ -82,6 +83,8 @@ export class CordovaProject {
     private _projectPath:string;
     private _packageJson:any;
     private _isDirty:boolean;
+    private sharedExecutor : CordovaExecutor;
+
 
     constructor(){
         this._isDirty = false;
@@ -273,6 +276,41 @@ export class CordovaProject {
         this._packageJson = this.loadPackageJSON(this._projectPath);
     }
 
+    public prepareProject(platform:string,cliOptions?:any): Promise<any> {
+        Logger.getInstance().debug("prepareProject: ", this._projectPath)
+        if(this.isBusy()){
+            return this.rejectForBusySharedExecutor();
+        }
+        this.sharedExecutor = new CordovaExecutor(this._projectPath);
+        return this.sharedExecutor.runPrepare(this._projectPath, platform,cliOptions);
+    }
+
+    public buildProject(platform:string, options:any): Promise<any> {
+        Logger.getInstance().debug("buildProject: ", this._projectPath, JSON.stringify(options));
+        if(this.isBusy()){
+            return this.rejectForBusySharedExecutor();
+        }
+        this.sharedExecutor = new CordovaExecutor(this._projectPath);
+        return this.sharedExecutor.runBuild(this._projectPath, platform, options);
+    }
+
+    /* 
+    public runProject(projectRoot:string,platform:string,target:string,options:any): Promise<any> {
+        //TODO!!
+    }
+
+    public cleanProject(projectRoot: string, platform:string): Promise<any> {
+        //TODO!!
+    }
+    **/
+
+    private rejectForBusySharedExecutor():Promise<any> {
+        return Promise.reject({
+          'ERROR_CODE':'EXECUTOR_BUSY',
+          'ERROR_MESSAGE':'Executor is busy'
+        });
+      }
+    
     public setName(name:string, save?:boolean):void {
         this._packageJson.name = name;
         this.setDirty();
@@ -346,6 +384,11 @@ export class CordovaProject {
     public isDirty():boolean{
         return this._isDirty;
     }
+
+    public isBusy():boolean{
+        return this.sharedExecutor && this.sharedExecutor.isBusy();
+    }
+    
 
     private assetsFolderForPlatform(platformName:string, platformVersion:string):string {
         if (platformName==='ios'){

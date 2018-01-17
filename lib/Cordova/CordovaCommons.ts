@@ -55,4 +55,7 @@ export interface CordovaProjectInfo {
   }
   
   
-  
+  export interface CordovaDevice {
+    targetId:string,
+    name:string
+  }
